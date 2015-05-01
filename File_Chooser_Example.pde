@@ -37,10 +37,11 @@ void setup()
         e.printStackTrace();
         line = null;
       }
-      
+
       // Print the contents of that line to the console
       if (line != null) println(line);
     } 
     while (line != null);
+    
   }
 }
