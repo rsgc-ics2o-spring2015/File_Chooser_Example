@@ -1,34 +1,32 @@
-// Import required library
-import javax.swing.JFileChooser;
+void setup() {
 
-void setup()
-{
-  // Create an object named 'chooser' based on class JFileChooser
-  JFileChooser chooser = new JFileChooser();
+  // This uses a Processing-provided function to make file selection a lot easier.
+  // Also, you will have the use of a platform-native file selection dialog box.
+  // (That is, the dialog box will look 'right' on OS X, or on Windows, et cetera).
+  // The first parameter is the message the user will see
+  // The second parameter is the name of a function that will be invoked, or "called"
+  // after a file selection has been made  
+  selectInput("Select a file to process:", "fileSelected");
+}
 
-  // This file chooser will allow selection of any file type
-  // Should read details of JFileChooser class here:
-  // http://docs.oracle.com/javase/7/docs/api/javax/swing/JFileChooser.html
-  // ... and adjust code in this program so that only text files are 'choosable'
-  // in the file chooser box
-  chooser.setFileFilter(chooser.getAcceptAllFileFilter());
+// This runs after a file selection has been made
+void fileSelected(File selection) {
 
-  // Show the dialog
-  int returnVal = chooser.showOpenDialog(null);
+  // Take different actions based on what the user chose to do
+  if (selection == null) {
 
-  // See what happened – if the return value indicates the user selected the 'Open'
-  // button, then print the name of the file selected to the console
-  if (returnVal == JFileChooser.APPROVE_OPTION) 
-  {
-    println("You chose to open this file: " + chooser.getSelectedFile().getName());
+    println("Window was closed or the user hit cancel.");
+  } else {
+
+    println("User selected " + selection.getAbsolutePath());
 
     // Now actually open the file using an object of type BufferedReader
     println("-------- file contents are --------");
     BufferedReader reader;
     String line;
-    reader = createReader(chooser.getSelectedFile());
-    do
-    {
+    reader = createReader(selection);
+    do {
+      
       // Attempt to read a line
       try {
         line = reader.readLine();
@@ -44,4 +42,5 @@ void setup()
     while (line != null);
     
   }
+  
 }
