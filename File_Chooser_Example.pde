@@ -1,4 +1,18 @@
+// Load required libraries from the Java API (application programming interface)
+// These allow us to load images from disk and write them to the 'data' folder
+import javax.imageio.*;
+import java.awt.image.*;
+
+// Globals
+BufferedImage image;             // Stores the initial image loaded off of the disk (from any location)
+boolean writeSuccessful = false; // Tracks whether image was successfully written to 'data' folder
+PImage imageToShow;              // Stores the image to be shown later, loaded from the 'data' folder
+
+// Runs once
 void setup() {
+  
+  // Create the canvas
+  size(800, 600);
 
   // This uses a Processing-provided function to make file selection a lot easier.
   // Also, you will have the use of a platform-native file selection dialog box.
@@ -9,6 +23,16 @@ void setup() {
   selectInput("Select a file to process:", "fileSelected");
 }
 
+// Runs repeatedly
+void draw() {
+  
+  // Show the image from the 'data' folder, if one was succesfully copied there
+  if (imageToShow != null) {
+    image(imageToShow, 0, 0);  
+  }
+  
+}
+
 // This runs after a file selection has been made
 void fileSelected(File selection) {
 
@@ -16,31 +40,43 @@ void fileSelected(File selection) {
   if (selection == null) {
 
     println("Window was closed or the user hit cancel.");
+    
   } else {
 
     println("User selected " + selection.getAbsolutePath());
 
-    // Now actually open the file using an object of type BufferedReader
-    println("-------- file contents are --------");
-    BufferedReader reader;
-    String line;
-    reader = createReader(selection);
-    do {
-      
-      // Attempt to read a line
+    // Attempt to read the image selected
+    try {
+      image = ImageIO.read(selection);
+    } 
+    catch (IOException e) {
+      image = null;
+      println("Error occurred reading image file.");
+      e.printStackTrace();
+    }
+
+    // Save the image to the sketch's data folder
+    if (image != null) {
+      println("Image loaded successfully.");
+      println("Attempting to save to 'data' folder of sketch.");
       try {
-        line = reader.readLine();
+        // TO DO: Need to write code that creates data folder if it doesn't already exist
+        // FOR NOW: The data folder must already be created, otherwise this line of code will fail.
+        writeSuccessful = ImageIO.write(image, "jpg", new File(sketchPath + "/data/" + selection.getName()));
       } 
       catch (IOException e) {
+        println("Error occurred writing image file to 'data' folder of sketch.");
         e.printStackTrace();
-        line = null;
       }
-
-      // Print the contents of that line to the console
-      if (line != null) println(line);
-    } 
-    while (line != null);
+    }
+    
+    // Show the image on the canvas
+    if (writeSuccessful) {
+      println("Successfully wrote image to the 'data' folder.");
+      imageToShow = loadImage(selection.getName());
+    } else {
+      imageToShow = null;
+    }
     
   }
-  
 }
